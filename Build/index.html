@@ -7,7 +7,22 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* Custom start overlay styles */
+      /* === 3cm BUFFER IN FULLSCREEN === */
+      #unity-container.fullscreen-buffer {
+        padding: 3cm;
+        box-sizing: border-box;
+        background: #000; /* black buffer area */
+      }
+
+      /* Make sure canvas fills the padded area nicely */
+      #unity-container.fullscreen-buffer #unity-canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      /* Your existing start overlay styles (from previous version) */
       #start-overlay {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -70,7 +85,6 @@
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
 
-      <!-- Original Unity loading bar (we'll control it) -->
       <div id="unity-loading-bar" style="display: none;">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -86,7 +100,7 @@
         <div id="unity-build-title">Drone_Delivery</div>
       </div>
 
-      <!-- NEW: Big Fullscreen + Load Popup -->
+      <!-- Start Overlay -->
       <div id="start-overlay">
         <h1>Drone Delivery</h1>
         <p>by F7eddie</p>
@@ -96,13 +110,14 @@
           <div id="custom-progress-bar">
             <div id="custom-progress-fill"></div>
           </div>
-          <div id="custom-status">Click the button to start loading</div>
+          <div id="custom-status">Click the button to start</div>
         </div>
       </div>
     </div>
 
     <script>
       var canvas = document.querySelector("#unity-canvas");
+      var container = document.getElementById("unity-container");
       var startOverlay = document.getElementById("start-overlay");
       var startBtn = document.getElementById("start-btn");
       var customLoading = document.getElementById("custom-loading");
@@ -122,13 +137,13 @@
         productVersion: "1.0",
       };
 
-      // Mobile vs Desktop styling (kept from your original)
+      // Mobile handling (kept from your original)
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
+        container.className = "unity-mobile";
         canvas.className = "unity-mobile";
       } else {
         canvas.style.width = "1920px";
@@ -137,8 +152,8 @@
 
       var unityInstance = null;
 
-      // ==================== BUTTON CLICK - LOAD AFTER FULLSCREEN ====================
-      startBtn.addEventListener("click", function () {
+      // ==================== FULLSCREEN + 3CM BUFFER ====================
+      function enterFullscreenWithBuffer() {
         // Enter fullscreen
         if (canvas.requestFullscreen) {
           canvas.requestFullscreen().catch(() => {});
@@ -147,37 +162,53 @@
         } else if (canvas.msRequestFullscreen) {
           canvas.msRequestFullscreen();
         }
+      }
 
-        // Hide start button and show loading UI
+      // Listen for fullscreen changes and apply/remove the 3cm buffer
+      document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+          // Add 3cm buffer when in fullscreen
+          container.classList.add('fullscreen-buffer');
+        } else {
+          // Remove buffer when exiting fullscreen
+          container.classList.remove('fullscreen-buffer');
+          // Restore original desktop size
+          if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            canvas.style.width = "1920px";
+            canvas.style.height = "1080px";
+          }
+        }
+      });
+
+      // ==================== BUTTON: LOAD GAME AFTER FULLSCREEN ====================
+      startBtn.addEventListener("click", function () {
         startBtn.style.display = "none";
         customLoading.style.display = "block";
         customStatus.innerText = "Entering fullscreen & loading game...";
 
-        // Load the Unity loader script
+        // First go fullscreen (this will trigger the buffer via the event above)
+        enterFullscreenWithBuffer();
+
+        // Then load the game
         var script = document.createElement("script");
         script.src = loaderUrl;
 
         script.onload = () => {
           createUnityInstance(canvas, config, (progress) => {
-            // Update our custom progress bar
             customFill.style.width = (progress * 100) + "%";
             customStatus.innerText = "Loading game... " + Math.floor(progress * 100) + "%";
 
-            // Also update Unity's original progress bar (optional)
             var unityProgress = document.querySelector("#unity-progress-bar-full");
             if (unityProgress) unityProgress.style.width = 100 * progress + "%";
           }).then((instance) => {
             unityInstance = instance;
-            // Hide everything when game is ready
             startOverlay.style.display = "none";
             document.querySelector("#unity-loading-bar").style.display = "none";
 
-            // Optional: connect original fullscreen button if it exists
+            // Connect original fullscreen button if present
             var fsButton = document.querySelector("#unity-fullscreen-button");
-            if (fsButton) {
-              fsButton.onclick = () => {
-                unityInstance.SetFullscreen(1);
-              };
+            if (fsButton && unityInstance) {
+              fsButton.onclick = () => unityInstance.SetFullscreen(1);
             }
           }).catch((message) => {
             customStatus.innerText = "Failed to load. Check console (F12).";
@@ -187,13 +218,12 @@
         };
 
         script.onerror = function () {
-          customStatus.innerText = "Could not load game files. Check filenames.";
+          customStatus.innerText = "Could not load game files.";
         };
 
         document.body.appendChild(script);
       });
 
-      // Optional: initial hint
       window.onload = function () {
         customStatus.innerText = "Ready! Click the button above.";
       };
