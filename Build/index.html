@@ -1,187 +1,202 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
+  <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Drone Delivery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | Drone_Delivery</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            color: #fff;
-            font-family: Arial, Helvetica, sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #unity-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            max-width: 1920px;
-            max-height: 1080px;
-        }
-        #unity-canvas {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: block;
-        }
-        #start-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            text-align: center;
-            padding: 20px;
-        }
-        #start-overlay h1 {
-            font-size: 3.2em;
-            margin-bottom: 8px;
-        }
-        #start-overlay p {
-            font-size: 1.3em;
-            margin-bottom: 40px;
-            opacity: 0.85;
-        }
-        #start-btn {
-            padding: 20px 55px;
-            font-size: 1.7em;
-            background: #00aaff;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0, 170, 255, 0.5);
-            transition: all 0.2s ease;
-        }
-        #start-btn:hover {
-            background: #0088cc;
-            transform: scale(1.05);
-        }
-        #loading-container {
-            width: 320px;
-            margin-top: 25px;
-            display: none;
-        }
-        #loading-bar {
-            width: 100%;
-            height: 10px;
-            background: #333;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        #loading-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(to right, #00aaff, #00ffaa);
-            transition: width 0.15s ease;
-        }
-        #status {
-            margin-top: 12px;
-            font-size: 1.15em;
-        }
+      /* Custom start overlay styles */
+      #start-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        text-align: center;
+        color: white;
+      }
+      #start-overlay h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+      }
+      #start-overlay p {
+        font-size: 1.3em;
+        margin-bottom: 30px;
+        opacity: 0.85;
+      }
+      #start-btn {
+        padding: 18px 50px;
+        font-size: 1.6em;
+        background: #00aaff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 170, 255, 0.5);
+      }
+      #start-btn:hover {
+        background: #0088cc;
+      }
+      #custom-loading {
+        width: 300px;
+        margin-top: 25px;
+        display: none;
+      }
+      #custom-progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #333;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      #custom-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #00aaff;
+        transition: width 0.2s ease;
+      }
+      #custom-status {
+        margin-top: 12px;
+        font-size: 1.1em;
+      }
     </style>
-</head>
-<body>
-    <div id="unity-container">
-        <canvas id="unity-canvas" width="1920" height="1080"></canvas>
-        
-        <!-- Fullscreen + Load Popup -->
-        <div id="start-overlay">
-            <h1>Drone Delivery</h1>
-            <p>by F7eddie</p>
-            
-            <button id="start-btn">Play in Fullscreen</button>
-            
-            <div id="loading-container">
-                <div id="loading-bar"><div id="loading-bar-fill"></div></div>
-                <div id="status">Click the button above to start</div>
-            </div>
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+
+      <!-- Original Unity loading bar (we'll control it) -->
+      <div id="unity-loading-bar" style="display: none;">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
+      </div>
+
+      <div id="unity-warning"></div>
+
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">Drone_Delivery</div>
+      </div>
+
+      <!-- NEW: Big Fullscreen + Load Popup -->
+      <div id="start-overlay">
+        <h1>Drone Delivery</h1>
+        <p>by F7eddie</p>
+        <button id="start-btn">Play in Fullscreen</button>
+
+        <div id="custom-loading">
+          <div id="custom-progress-bar">
+            <div id="custom-progress-fill"></div>
+          </div>
+          <div id="custom-status">Click the button to start loading</div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // ==================== UPDATE THESE FILENAMES ====================
-        // Go to your Build folder and copy the exact filenames Unity created
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/DroneDelivery.loader.js";        // ← CHANGE THIS
-        var dataUrl   = buildUrl + "/DroneDelivery.data";             // ← CHANGE THIS
-        var frameworkUrl = buildUrl + "/DroneDelivery.framework.js";  // ← CHANGE THIS
-        var codeUrl   = buildUrl + "/DroneDelivery.wasm";             // ← CHANGE THIS (or .js)
-        // ================================================================
+      var canvas = document.querySelector("#unity-canvas");
+      var startOverlay = document.getElementById("start-overlay");
+      var startBtn = document.getElementById("start-btn");
+      var customLoading = document.getElementById("custom-loading");
+      var customFill = document.getElementById("custom-progress-fill");
+      var customStatus = document.getElementById("custom-status");
 
-        var canvas = document.getElementById("unity-canvas");
-        var overlay = document.getElementById("start-overlay");
-        var startBtn = document.getElementById("start-btn");
-        var loadingContainer = document.getElementById("loading-container");
-        var loadingFill = document.getElementById("loading-bar-fill");
-        var statusText = document.getElementById("status");
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/a928705433bd28c0cf588e497698ea8f.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/7c2e535a2bae0b6af448127da25c9006.data.unityweb",
+        frameworkUrl: buildUrl + "/c567148f20765437f74d711b26459f12.framework.js.unityweb",
+        codeUrl: buildUrl + "/64adc74bc694812e239c8346655a7a79.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Drone_Delivery",
+        productVersion: "1.0",
+      };
 
-        var unityInstance = null;
+      // Mobile vs Desktop styling (kept from your original)
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        canvas.style.width = "1920px";
+        canvas.style.height = "1080px";
+      }
 
-        startBtn.addEventListener("click", function () {
-            // 1. Enter fullscreen immediately
-            if (canvas.requestFullscreen) {
-                canvas.requestFullscreen().catch(() => {});
-            } else if (canvas.webkitRequestFullscreen) {
-                canvas.webkitRequestFullscreen();
-            } else if (canvas.msRequestFullscreen) {
-                canvas.msRequestFullscreen();
+      var unityInstance = null;
+
+      // ==================== BUTTON CLICK - LOAD AFTER FULLSCREEN ====================
+      startBtn.addEventListener("click", function () {
+        // Enter fullscreen
+        if (canvas.requestFullscreen) {
+          canvas.requestFullscreen().catch(() => {});
+        } else if (canvas.webkitRequestFullscreen) {
+          canvas.webkitRequestFullscreen();
+        } else if (canvas.msRequestFullscreen) {
+          canvas.msRequestFullscreen();
+        }
+
+        // Hide start button and show loading UI
+        startBtn.style.display = "none";
+        customLoading.style.display = "block";
+        customStatus.innerText = "Entering fullscreen & loading game...";
+
+        // Load the Unity loader script
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+
+        script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+            // Update our custom progress bar
+            customFill.style.width = (progress * 100) + "%";
+            customStatus.innerText = "Loading game... " + Math.floor(progress * 100) + "%";
+
+            // Also update Unity's original progress bar (optional)
+            var unityProgress = document.querySelector("#unity-progress-bar-full");
+            if (unityProgress) unityProgress.style.width = 100 * progress + "%";
+          }).then((instance) => {
+            unityInstance = instance;
+            // Hide everything when game is ready
+            startOverlay.style.display = "none";
+            document.querySelector("#unity-loading-bar").style.display = "none";
+
+            // Optional: connect original fullscreen button if it exists
+            var fsButton = document.querySelector("#unity-fullscreen-button");
+            if (fsButton) {
+              fsButton.onclick = () => {
+                unityInstance.SetFullscreen(1);
+              };
             }
-
-            // 2. Hide button and show loading
-            startBtn.style.display = "none";
-            loadingContainer.style.display = "block";
-            statusText.innerText = "Entering fullscreen & loading game...";
-
-            // 3. Load and start the Unity game
-            var script = document.createElement("script");
-            script.src = loaderUrl;
-
-            script.onload = function () {
-                var config = {
-                    dataUrl: dataUrl,
-                    frameworkUrl: frameworkUrl,
-                    codeUrl: codeUrl,
-                    streamingAssetsUrl: "StreamingAssets",
-                    companyName: "F7eddie",
-                    productName: "Drone Delivery",
-                    productVersion: "1.0",
-                };
-
-                createUnityInstance(canvas, config, function (progress) {
-                    // Update progress bar
-                    loadingFill.style.width = (progress * 100) + "%";
-                    statusText.innerText = "Loading game... " + Math.floor(progress * 100) + "%";
-                }).then(function (instance) {
-                    unityInstance = instance;
-                    // Game is ready → hide overlay completely
-                    overlay.style.display = "none";
-                }).catch(function (error) {
-                    statusText.innerText = "Failed to load. Check browser console (F12).";
-                    console.error("Unity load error:", error);
-                });
-            };
-
-            script.onerror = function () {
-                statusText.innerText = "Could not load game files. Check that filenames are correct.";
-            };
-
-            document.body.appendChild(script);
-        });
-
-        // Optional: Show a hint on page load
-        window.onload = function () {
-            statusText.innerText = "Ready when you are!";
+          }).catch((message) => {
+            customStatus.innerText = "Failed to load. Check console (F12).";
+            console.error(message);
+            alert(message);
+          });
         };
+
+        script.onerror = function () {
+          customStatus.innerText = "Could not load game files. Check filenames.";
+        };
+
+        document.body.appendChild(script);
+      });
+
+      // Optional: initial hint
+      window.onload = function () {
+        customStatus.innerText = "Ready! Click the button above.";
+      };
     </script>
-</body>
+  </body>
 </html>
