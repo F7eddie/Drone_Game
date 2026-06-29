@@ -9,15 +9,16 @@
     <style>
         body {
             font-family: 'Inter', system_ui, sans-serif;
+            background-color: #0a0a0a;
         }
         .heading-font {
             font-family: 'Space Grotesk', 'Inter', sans-serif;
             font-weight: 600;
             letter-spacing: -0.03em;
         }
-        .unity-canvas-wrapper {
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
-            border: 1px solid #334155;
+        .game-wrapper {
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+            border: 1px solid #27272a;
         }
         .fullscreen-buffer {
             padding: 3cm;
@@ -30,17 +31,24 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200">
-    <div class="max-w-[1100px] mx-auto px-6 pt-16 pb-12">
+<body class="bg-[#0a0a0a] text-zinc-200">
+
+    <div class="max-w-[1100px] mx-auto px-6 pt-14 pb-10">
         
         <!-- Title + Description -->
-        <div class="text-center mb-10">
-            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font mb-4">
+        <div class="max-w-2xl mx-auto text-center mb-12">
+            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font mb-5">
                 Drone Delivery
             </h1>
-            <p class="text-xl text-slate-400 max-w-md mx-auto">
-                A precision drone simulation by F7eddie.<br>
-                Master the skies and deliver with care.
+            
+            <p class="text-xl text-zinc-400 max-w-lg mx-auto leading-relaxed">
+                A precision drone simulation where every delivery counts. 
+                Master realistic flight physics, navigate dynamic environments, 
+                and deliver packages on time under pressure.
+            </p>
+            
+            <p class="mt-4 text-sm text-zinc-500">
+                Built by F7eddie • Play directly in your browser
             </p>
         </div>
 
@@ -48,20 +56,19 @@
         <div class="max-w-[1100px] mx-auto">
             
             <!-- Game Container -->
-            <div id="game-wrapper" class="hidden unity-canvas-wrapper rounded-3xl overflow-hidden border border-slate-700 bg-black">
-                <div id="unity-container" class="relative w-full aspect-video">
+            <div id="game-wrapper" class="hidden game-wrapper rounded-3xl overflow-hidden border border-zinc-800 bg-black">
+                <div id="unity-container" class="relative w-full aspect-video bg-black">
                     <canvas id="unity-canvas" width="1920" height="1080" class="w-full h-full"></canvas>
                     
                     <!-- Start Overlay -->
                     <div id="start-overlay" class="absolute inset-0 bg-black/90 flex items-center justify-center z-50">
                         <div class="text-center px-8">
-                            <h3 class="text-4xl font-semibold mb-3">Ready to fly?</h3>
-                            <p class="text-slate-400 mb-8">Click below to launch in fullscreen</p>
+                            <h3 class="text-4xl font-semibold mb-3">Ready to deliver?</h3>
+                            <p class="text-zinc-400 mb-8">The game will launch in fullscreen</p>
                             
                             <button id="start-btn"
-                                    class="px-10 py-4 bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.985] transition-all font-semibold rounded-3xl text-xl flex items-center gap-x-3 mx-auto shadow-2xl">
-                                <span>Play in Fullscreen</span>
-                                <i class="fa-solid fa-play ml-1"></i>
+                                    class="px-10 py-4 bg-white text-black hover:bg-zinc-100 active:scale-[0.985] transition-all font-semibold rounded-3xl text-xl flex items-center gap-x-3 mx-auto">
+                                <span>Start Game</span>
                             </button>
                         </div>
                     </div>
@@ -70,7 +77,7 @@
                     <div id="pause-overlay" class="hidden absolute inset-0 bg-black/95 z-[60] flex items-center justify-center">
                         <div class="text-center px-6">
                             <h3 class="text-5xl font-semibold mb-3">Game Paused</h3>
-                            <p class="text-xl text-slate-400 mb-8">You exited fullscreen</p>
+                            <p class="text-xl text-zinc-400 mb-8">You exited fullscreen</p>
                             
                             <button id="resume-btn"
                                     class="px-10 py-4 bg-sky-500 hover:bg-sky-600 transition-all text-white font-semibold rounded-3xl text-xl flex items-center gap-x-3 mx-auto">
@@ -84,37 +91,43 @@
             <!-- Launch Button -->
             <div id="play-prompt" class="text-center mt-8">
                 <button onclick="launchGame()" 
-                        class="group px-14 py-5 bg-white hover:bg-slate-100 active:scale-[0.985] transition-all text-slate-900 font-semibold rounded-3xl text-2xl flex items-center gap-x-4 mx-auto shadow-2xl shadow-white/10">
-                    <span>Play Drone Delivery</span>
-                    <i class="fa-solid fa-arrow-right group-active:translate-x-1 transition-transform"></i>
+                        class="group px-16 py-5 bg-white hover:bg-zinc-100 active:scale-[0.985] transition-all text-black font-semibold rounded-3xl text-2xl flex items-center gap-x-4 mx-auto shadow-xl">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-play ml-1"></i>
                 </button>
-                <p class="mt-4 text-sm text-slate-500">Best experienced in fullscreen • Desktop recommended</p>
+                <p class="mt-4 text-sm text-zinc-500">Recommended on desktop • Goes fullscreen automatically</p>
             </div>
 
         </div>
     </div>
 
     <script>
-        // Tailwind
-        function initTailwind() {
-            // Already handled by CDN
-        }
-
         let unityInstance = null;
 
         function launchGame() {
             const prompt = document.getElementById('play-prompt');
             const wrapper = document.getElementById('game-wrapper');
-            
+            const container = document.getElementById('unity-container');
+            const canvas = document.getElementById('unity-canvas');
+
             prompt.style.display = 'none';
             wrapper.style.display = 'block';
             wrapper.classList.remove('hidden');
-            
-            // Scroll smoothly to game
-            wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Go fullscreen immediately
+            if (container.requestFullscreen) {
+                container.requestFullscreen().catch(() => {});
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+
+            // Load the game
+            loadUnityGame();
         }
 
-        function initializeGame() {
+        function loadUnityGame() {
             const canvas = document.getElementById("unity-canvas");
             const container = document.getElementById("unity-container");
             const startOverlay = document.getElementById("start-overlay");
@@ -135,10 +148,10 @@
                 productVersion: "1.0",
             };
 
-            // Desktop size
+            // Desktop sizing
             if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                canvas.style.width = "1920px";
-                canvas.style.height = "1080px";
+                canvas.style.width = "100%";
+                canvas.style.height = "100%";
             }
 
             // Fullscreen + 3cm buffer + pause logic
@@ -154,49 +167,42 @@
 
             // Resume button
             resumeBtn.addEventListener("click", () => {
-                if (canvas.requestFullscreen) {
-                    canvas.requestFullscreen();
-                } else if (canvas.webkitRequestFullscreen) {
-                    canvas.webkitRequestFullscreen();
-                } else if (canvas.msRequestFullscreen) {
-                    canvas.msRequestFullscreen();
-                }
+                if (canvas.requestFullscreen) canvas.requestFullscreen();
+                else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
             });
 
-            // Start button - loads the game
+            // Start button inside game
             startBtn.addEventListener("click", function () {
                 startBtn.style.display = "none";
-                startOverlay.style.background = 'rgba(0,0,0,0.7)';
+                startOverlay.style.background = 'rgba(0,0,0,0.6)';
 
                 const script = document.createElement("script");
                 script.src = loaderUrl;
 
                 script.onload = () => {
                     createUnityInstance(canvas, config, (progress) => {
-                        // Progress can be added here if needed
+                        // Optional progress feedback
                     }).then((instance) => {
                         unityInstance = instance;
                         startOverlay.style.display = "none";
                     }).catch((error) => {
-                        console.error("Failed to load game:", error);
-                        alert("Failed to load the game. Please check the console.");
+                        console.error(error);
+                        alert("Failed to load the game. Check console for details.");
                     });
                 };
 
                 script.onerror = () => {
-                    alert("Could not load game files. Make sure the Build folder is in the same directory.");
+                    alert("Could not load game files. Make sure the Build folder is correct.");
                 };
 
                 document.body.appendChild(script);
             });
         }
 
-        function init() {
-            initTailwind();
-            initializeGame();
-        }
-
-        window.onload = init;
+        // Initialize on page load
+        window.onload = function() {
+            console.log('%c[Drone Delivery] Clean professional site ready', 'color:#3f3f46');
+        };
     </script>
 </body>
 </html>
