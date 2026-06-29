@@ -33,36 +33,38 @@
 </head>
 <body class="bg-[#0a0a0a] text-zinc-200">
 
-    <div class="max-w-[1200px] mx-auto px-6 pt-12 pb-10">
+    <div class="max-w-[1400px] mx-auto px-6 pt-10 pb-12">
         
         <!-- Title -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-6">
             <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font">
                 Drone Delivery
             </h1>
         </div>
 
-        <!-- Bigger Description + Status -->
-        <div class="max-w-3xl mx-auto text-center mb-10">
-            <div class="flex justify-center mb-4">
-                <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30">
-                    <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                    <span class="text-emerald-400 text-sm font-medium">Available to play now</span>
-                </div>
+        <!-- Green Status Badge -->
+        <div class="flex justify-center mb-6">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30">
+                <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="text-emerald-400 text-sm font-medium tracking-wide">Available to play now</span>
             </div>
+        </div>
 
-            <p class="text-xl text-zinc-400 leading-relaxed">
-                A precision drone simulation where timing, control, and skill matter. 
-                Navigate realistic wind, tight spaces, and changing conditions to deliver packages 
-                on time. Every flight tests your precision and decision-making.
+        <!-- Bigger & More Detailed Description -->
+        <div class="max-w-3xl mx-auto text-center mb-10">
+            <p class="text-xl text-zinc-300 leading-relaxed">
+                Drone Delivery is a precision-focused simulation that puts you in control of advanced delivery drones. 
+                Master realistic flight physics, manage wind resistance, and navigate complex environments to complete 
+                time-sensitive deliveries. Every mission challenges your timing, spatial awareness, and decision-making 
+                under pressure. Designed for players who enjoy skill-based gameplay and satisfying, high-fidelity flight mechanics.
             </p>
         </div>
 
         <!-- Play Area -->
-        <div class="max-w-[1200px] mx-auto">
+        <div class="max-w-[1400px] mx-auto">
             
-            <!-- Game Container -->
-            <div id="game-wrapper" class="hidden game-wrapper rounded-3xl overflow-hidden border border-zinc-800 bg-black">
+            <!-- Game Container (Wider) -->
+            <div id="game-wrapper" class="hidden game-wrapper rounded-3xl overflow-hidden border border-zinc-800 bg-black w-full">
                 <div id="unity-container" class="relative w-full aspect-video bg-black">
                     <canvas id="unity-canvas" width="1920" height="1080" class="w-full h-full"></canvas>
                     
@@ -88,7 +90,7 @@
                     <span>Play Now</span>
                     <i class="fa-solid fa-play ml-1"></i>
                 </button>
-                <p class="mt-4 text-sm text-zinc-500">Goes fullscreen automatically • Best on desktop</p>
+                <p class="mt-4 text-sm text-zinc-500">Launches in fullscreen automatically • Best experienced on desktop</p>
             </div>
 
         </div>
@@ -103,10 +105,7 @@
             const container = document.getElementById('unity-container');
             const canvas = document.getElementById('unity-canvas');
 
-            // Hide play button
             prompt.style.display = 'none';
-            
-            // Show game
             wrapper.style.display = 'block';
             wrapper.classList.remove('hidden');
 
@@ -119,7 +118,7 @@
                 container.msRequestFullscreen();
             }
 
-            // Load the game automatically
+            // Load the game automatically (no extra clicks)
             loadUnityGame();
         }
 
@@ -142,7 +141,7 @@
                 productVersion: "1.0",
             };
 
-            // Responsive sizing
+            // Make canvas fill the container properly
             canvas.style.width = "100%";
             canvas.style.height = "100%";
 
@@ -163,23 +162,23 @@
                 else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
             });
 
-            // Automatically load Unity (no extra button)
+            // Auto-load Unity
             const script = document.createElement("script");
             script.src = loaderUrl;
 
             script.onload = () => {
                 createUnityInstance(canvas, config, (progress) => {
-                    // Progress can be shown here if needed
+                    // Optional: you can show loading progress here
                 }).then((instance) => {
                     unityInstance = instance;
                 }).catch((error) => {
-                    console.error("Game failed to load:", error);
-                    alert("Failed to load the game. Please check the console (F12).");
+                    console.error("Failed to load game:", error);
+                    alert("Failed to load the game. Check the browser console (F12) for details.");
                 });
             };
 
             script.onerror = () => {
-                alert("Could not load game files. Make sure the Build folder is in the same directory.");
+                alert("Could not load game files. Make sure your Build folder is in the same directory.");
             };
 
             document.body.appendChild(script);
