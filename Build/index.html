@@ -29,13 +29,6 @@
             width: 100% !important;
             height: 100% !important;
         }
-        .screenshot-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .screenshot-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-zinc-200">
@@ -52,10 +45,7 @@
                 </div>
                 
                 <div class="hidden md:flex items-center gap-x-8 text-sm">
-                    <a href="#about" class="hover:text-white transition-colors">About</a>
-                    <a href="#features" class="hover:text-white transition-colors">Features</a>
-                    <a href="#screenshots" class="hover:text-white transition-colors">Screenshots</a>
-                    <a href="#play" class="hover:text-white transition-colors">Play</a>
+                    
                 </div>
 
                 <button onclick="document.getElementById('play').scrollIntoView({ behavior: 'smooth' })" 
@@ -90,14 +80,14 @@
                 <i class="fa-solid fa-play"></i>
             </button>
             
-            <button onclick="document.getElementById('screenshots').scrollIntoView({ behavior: 'smooth' })" 
-                    class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 transition-all font-medium rounded-3xl text-lg flex items-center gap-x-2">
-                <span>Watch Trailer</span>
-            </button>
+            <a href="https://f7eddieportfolio.fthurstans.workers.dev/"
+                    class="px-8 py-4 border border-zinc-700 hover:bg-zinc-900 transition-all font-medium rounded-3xl text-lg inline-flex items-center gap-x-2 no-underline">
+                <span>Other Products</span>
+            </a>
         </div>
     </div>
 
-    <!-- About / Description -->
+    <!-- About Section (Centered) -->
     <div id="about" class="max-w-screen-2xl mx-auto px-8 py-16 border-t border-zinc-800">
         <div class="max-w-3xl mx-auto text-center">
             <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">THE EXPERIENCE</div>
@@ -110,15 +100,15 @@
         </div>
     </div>
 
-    <!-- Features -->
+    <!-- Features Section (Now Properly Centered) -->
     <div id="features" class="max-w-screen-2xl mx-auto px-8 py-16 bg-zinc-900/50 border-y border-zinc-800">
-        <div class="max-w-screen-xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
                 <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">WHAT MAKES IT SPECIAL</div>
                 <h2 class="text-5xl font-semibold tracking-tight">Built for pilots who demand more</h2>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center">
                 <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
                     <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center mb-6">
                         <i class="fa-solid fa-wind text-3xl"></i>
@@ -156,39 +146,7 @@
 
     <!-- Screenshots -->
     <div id="screenshots" class="max-w-screen-2xl mx-auto px-8 py-20">
-        <div class="flex items-end justify-between mb-10">
-            <div>
-                <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">IN ACTION</div>
-                <h2 class="text-5xl font-semibold tracking-tight">Moments from the skies</h2>
-            </div>
-        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="screenshot-card rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-zinc-700 mb-4"></i>
-                    <p class="font-medium">Urban Delivery</p>
-                </div>
-            </div>
-            <div class="screenshot-card rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-zinc-700 mb-4"></i>
-                    <p class="font-medium">Mountain Pass</p>
-                </div>
-            </div>
-            <div class="screenshot-card rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-zinc-700 mb-4"></i>
-                    <p class="font-medium">Night Operations</p>
-                </div>
-            </div>
-            <div class="screenshot-card rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-zinc-700 mb-4"></i>
-                    <p class="font-medium">Precision Landing</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Play the Game -->
@@ -200,7 +158,6 @@
         </div>
 
         <div class="max-w-[1400px] mx-auto">
-            <!-- Game Container -->
             <div id="game-wrapper" class="hidden game-wrapper rounded-3xl overflow-hidden border border-zinc-800 bg-black w-full">
                 <div id="unity-container" class="relative w-full aspect-video bg-black">
                     <canvas id="unity-canvas" width="1920" height="1080" class="w-full h-full"></canvas>
@@ -217,7 +174,6 @@
                 </div>
             </div>
 
-            <!-- Play Button -->
             <div id="play-prompt" class="text-center mt-8">
                 <button onclick="launchGame()" 
                         class="group px-16 py-5 bg-white hover:bg-zinc-100 active:scale-[0.985] transition-all text-black font-semibold rounded-3xl text-2xl flex items-center gap-x-4 mx-auto shadow-2xl">
@@ -248,7 +204,6 @@
             wrapper.style.display = 'block';
             wrapper.classList.remove('hidden');
 
-            // Go fullscreen
             if (container.requestFullscreen) container.requestFullscreen().catch(() => {});
             else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
             else if (container.msRequestFullscreen) container.msRequestFullscreen();
