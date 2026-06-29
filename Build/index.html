@@ -7,77 +7,46 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* === 3cm BUFFER IN FULLSCREEN === */
+      /* 3cm buffer in fullscreen */
       #unity-container.fullscreen-buffer {
         padding: 3cm;
         box-sizing: border-box;
-        background: #000; /* black buffer area */
+        background: #000;
       }
-
-      /* Make sure canvas fills the padded area nicely */
       #unity-container.fullscreen-buffer #unity-canvas {
         width: 100% !important;
         height: 100% !important;
-        max-width: 100%;
-        max-height: 100%;
       }
 
-      /* Your existing start overlay styles (from previous version) */
-      #start-overlay {
+      /* Pause overlay (no Unity changes) */
+      #pause-overlay {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        z-index: 200;
+        z-index: 300;
         text-align: center;
         color: white;
       }
-      #start-overlay h1 {
+      #pause-overlay h2 {
         font-size: 3em;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
       }
-      #start-overlay p {
-        font-size: 1.3em;
-        margin-bottom: 30px;
-        opacity: 0.85;
-      }
-      #start-btn {
-        padding: 18px 50px;
+      #resume-btn {
+        padding: 20px 50px;
         font-size: 1.6em;
         background: #00aaff;
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
         box-shadow: 0 4px 15px rgba(0, 170, 255, 0.5);
       }
-      #start-btn:hover {
+      #resume-btn:hover {
         background: #0088cc;
-      }
-      #custom-loading {
-        width: 300px;
-        margin-top: 25px;
-        display: none;
-      }
-      #custom-progress-bar {
-        width: 100%;
-        height: 10px;
-        background: #333;
-        border-radius: 5px;
-        overflow: hidden;
-      }
-      #custom-progress-fill {
-        height: 100%;
-        width: 0%;
-        background: #00aaff;
-        transition: width 0.2s ease;
-      }
-      #custom-status {
-        margin-top: 12px;
-        font-size: 1.1em;
       }
     </style>
   </head>
@@ -93,7 +62,6 @@
       </div>
 
       <div id="unity-warning"></div>
-
       <div id="unity-footer">
         <div id="unity-logo-title-footer"></div>
         <div id="unity-fullscreen-button"></div>
@@ -105,13 +73,19 @@
         <h1>Drone Delivery</h1>
         <p>by F7eddie</p>
         <button id="start-btn">Play in Fullscreen</button>
-
-        <div id="custom-loading">
-          <div id="custom-progress-bar">
-            <div id="custom-progress-fill"></div>
+        <div id="custom-loading" style="display:none; width:300px; margin-top:25px;">
+          <div style="width:100%; height:10px; background:#333; border-radius:5px; overflow:hidden;">
+            <div id="custom-progress-fill" style="height:100%; width:0%; background:#00aaff; transition:width 0.2s;"></div>
           </div>
-          <div id="custom-status">Click the button to start</div>
+          <div id="custom-status" style="margin-top:12px; font-size:1.1em;">Click the button to start</div>
         </div>
+      </div>
+
+      <!-- Pause Overlay (visual only - no Unity changes) -->
+      <div id="pause-overlay">
+        <h2>Game Paused</h2>
+        <p>You exited fullscreen</p>
+        <button id="resume-btn">Return to Fullscreen</button>
       </div>
     </div>
 
@@ -120,9 +94,8 @@
       var container = document.getElementById("unity-container");
       var startOverlay = document.getElementById("start-overlay");
       var startBtn = document.getElementById("start-btn");
-      var customLoading = document.getElementById("custom-loading");
-      var customFill = document.getElementById("custom-progress-fill");
-      var customStatus = document.getElementById("custom-status");
+      var pauseOverlay = document.getElementById("pause-overlay");
+      var resumeBtn = document.getElementById("resume-btn");
 
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/a928705433bd28c0cf588e497698ea8f.loader.js";
@@ -137,7 +110,7 @@
         productVersion: "1.0",
       };
 
-      // Mobile handling (kept from your original)
+      // Mobile handling
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -153,79 +126,60 @@
       var unityInstance = null;
 
       // ==================== FULLSCREEN + 3CM BUFFER ====================
-      function enterFullscreenWithBuffer() {
-        // Enter fullscreen
+      document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+          container.classList.add('fullscreen-buffer');
+          // Hide pause overlay when back in fullscreen
+          pauseOverlay.style.display = "none";
+        } else {
+          container.classList.remove('fullscreen-buffer');
+          // Show pause overlay when exiting fullscreen
+          pauseOverlay.style.display = "flex";
+        }
+      });
+
+      // Resume button - goes back to fullscreen
+      resumeBtn.addEventListener("click", () => {
         if (canvas.requestFullscreen) {
-          canvas.requestFullscreen().catch(() => {});
+          canvas.requestFullscreen();
         } else if (canvas.webkitRequestFullscreen) {
           canvas.webkitRequestFullscreen();
         } else if (canvas.msRequestFullscreen) {
           canvas.msRequestFullscreen();
         }
-      }
-
-      // Listen for fullscreen changes and apply/remove the 3cm buffer
-      document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-          // Add 3cm buffer when in fullscreen
-          container.classList.add('fullscreen-buffer');
-        } else {
-          // Remove buffer when exiting fullscreen
-          container.classList.remove('fullscreen-buffer');
-          // Restore original desktop size
-          if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            canvas.style.width = "1920px";
-            canvas.style.height = "1080px";
-          }
-        }
       });
 
-      // ==================== BUTTON: LOAD GAME AFTER FULLSCREEN ====================
+      // ==================== START BUTTON ====================
       startBtn.addEventListener("click", function () {
         startBtn.style.display = "none";
-        customLoading.style.display = "block";
-        customStatus.innerText = "Entering fullscreen & loading game...";
+        document.getElementById("custom-loading").style.display = "block";
+        document.getElementById("custom-status").innerText = "Entering fullscreen & loading game...";
 
-        // First go fullscreen (this will trigger the buffer via the event above)
-        enterFullscreenWithBuffer();
+        // Enter fullscreen
+        if (canvas.requestFullscreen) canvas.requestFullscreen();
+        else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
 
-        // Then load the game
+        // Load the game
         var script = document.createElement("script");
         script.src = loaderUrl;
-
         script.onload = () => {
           createUnityInstance(canvas, config, (progress) => {
-            customFill.style.width = (progress * 100) + "%";
-            customStatus.innerText = "Loading game... " + Math.floor(progress * 100) + "%";
-
-            var unityProgress = document.querySelector("#unity-progress-bar-full");
-            if (unityProgress) unityProgress.style.width = 100 * progress + "%";
+            document.getElementById("custom-progress-fill").style.width = (progress * 100) + "%";
+            document.getElementById("custom-status").innerText = "Loading... " + Math.floor(progress * 100) + "%";
           }).then((instance) => {
             unityInstance = instance;
             startOverlay.style.display = "none";
             document.querySelector("#unity-loading-bar").style.display = "none";
-
-            // Connect original fullscreen button if present
-            var fsButton = document.querySelector("#unity-fullscreen-button");
-            if (fsButton && unityInstance) {
-              fsButton.onclick = () => unityInstance.SetFullscreen(1);
-            }
-          }).catch((message) => {
-            customStatus.innerText = "Failed to load. Check console (F12).";
-            console.error(message);
-            alert(message);
+          }).catch((err) => {
+            document.getElementById("custom-status").innerText = "Failed to load. Check console (F12).";
+            console.error(err);
           });
         };
-
-        script.onerror = function () {
-          customStatus.innerText = "Could not load game files.";
-        };
-
         document.body.appendChild(script);
       });
 
-      window.onload = function () {
-        customStatus.innerText = "Ready! Click the button above.";
+      window.onload = () => {
+        document.getElementById("custom-status").innerText = "Ready! Click Play in Fullscreen";
       };
     </script>
   </body>
