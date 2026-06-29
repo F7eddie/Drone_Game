@@ -3,274 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drone Delivery • F7eddie</title>
+    <title>Drone Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        :root {
-            --primary: #0ea5e9;
-        }
-        
         body {
             font-family: 'Inter', system_ui, sans-serif;
         }
-        
         .heading-font {
             font-family: 'Space Grotesk', 'Inter', sans-serif;
             font-weight: 600;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.03em;
         }
-
-        .game-container {
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        .unity-canvas-wrapper {
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
             border: 1px solid #334155;
         }
-
-        .section-header {
-            font-size: 2.25rem;
-            line-height: 2.5rem;
-            font-weight: 600;
-            letter-spacing: -0.025em;
+        .fullscreen-buffer {
+            padding: 3cm;
+            box-sizing: border-box;
+            background: #000;
         }
-
-        .nav-active {
-            color: white;
-            font-weight: 500;
-        }
-
-        .feature-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-
-        .screenshot {
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
-        }
-        
-        .screenshot:hover {
-            transform: scale(1.02);
-        }
-
-        .unity-canvas-wrapper {
-            background: #0f172a;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+        .fullscreen-buffer #unity-canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200">
-    <!-- Navbar -->
-    <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
-        <div class="max-w-screen-2xl mx-auto">
-            <div class="px-8 py-5 flex items-center justify-between">
-                <div class="flex items-center gap-x-3">
-                    <div class="w-10 h-10 bg-sky-500 rounded-2xl flex items-center justify-center">
-                        <i class="fa-solid fa-drone text-white text-3xl"></i>
-                    </div>
-                    <div>
-                        <span class="font-semibold text-2xl tracking-tight">Drone Delivery</span>
-                    </div>
-                </div>
-                
-                <div class="hidden md:flex items-center gap-x-8 text-sm">
-                    <a href="#about" class="hover:text-white transition-colors">About</a>
-                    <a href="#features" class="hover:text-white transition-colors">Features</a>
-                    <a href="#screenshots" class="hover:text-white transition-colors">Screenshots</a>
-                    <a href="#play" class="hover:text-white transition-colors">Play</a>
-                </div>
-
-                <div class="flex items-center gap-x-4">
-                    <a href="https://github.com/F7eddie/Drone_Game" target="_blank" 
-                       class="hidden sm:flex items-center gap-x-2 px-4 py-2 text-sm rounded-3xl border border-slate-700 hover:bg-slate-900 transition-colors">
-                        <i class="fa-brands fa-github"></i>
-                        <span>GitHub</span>
-                    </a>
-                    <button onclick="document.getElementById('play').scrollIntoView({ behavior: 'smooth' })" 
-                            class="px-5 py-2.5 bg-white text-slate-900 hover:bg-slate-100 transition-all font-medium text-sm rounded-3xl flex items-center gap-x-2">
-                        <span>Play Now</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <div class="max-w-screen-2xl mx-auto px-8 pt-16 pb-20">
-        <div class="max-w-3xl">
-            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-slate-900 border border-slate-800 mb-6">
-                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span class="text-sm font-medium text-emerald-400">Now available in browser</span>
-            </div>
-            
-            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font leading-none mb-6">
-                Drone<br>Delivery
-            </h1>
-            
-            <p class="max-w-md text-xl text-slate-400 mb-10">
-                Precision flying. Realistic physics.<br>
-                Master the skies and deliver packages on time.
-            </p>
-            
-            <div class="flex items-center gap-x-4">
-                <button onclick="document.getElementById('play').scrollIntoView({ behavior: 'smooth' })" 
-                        class="px-8 py-4 bg-sky-500 hover:bg-sky-600 transition-all text-white font-semibold rounded-3xl flex items-center gap-x-3 text-lg shadow-lg shadow-sky-500/30">
-                    <span>Play Now</span>
-                    <i class="fa-solid fa-play ml-1"></i>
-                </button>
-                
-                <button onclick="document.getElementById('screenshots').scrollIntoView({ behavior: 'smooth' })" 
-                        class="px-6 py-4 border border-slate-700 hover:bg-slate-900 transition-all font-medium rounded-3xl flex items-center gap-x-2">
-                    <span>Watch Trailer</span>
-                </button>
-            </div>
-            
-            <div class="mt-8 flex items-center gap-x-8 text-sm text-slate-400">
-                <div class="flex items-center gap-x-2">
-                    <i class="fa-solid fa-globe"></i>
-                    <span>Browser</span>
-                </div>
-                <div class="flex items-center gap-x-2">
-                    <i class="fa-solid fa-desktop"></i>
-                    <span>Desktop</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- About Section -->
-    <div id="about" class="max-w-screen-2xl mx-auto px-8 py-16 border-t border-slate-800">
-        <div class="max-w-2xl">
-            <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">THE GAME</div>
-            <h2 class="section-header mb-6">Precision delivery in a dynamic world</h2>
-            <p class="text-lg text-slate-400">
-                Drone Delivery is a relaxing yet challenging simulation where you pilot drones through increasingly complex environments. 
-                Master wind, obstacles, and tight delivery windows in this beautifully crafted experience.
-            </p>
-        </div>
-    </div>
-
-    <!-- Features -->
-    <div id="features" class="max-w-screen-2xl mx-auto px-8 py-16 bg-slate-900/50 border-y border-slate-800">
-        <div class="max-w-screen-xl mx-auto">
-            <div class="text-center mb-12">
-                <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">FEATURES</div>
-                <h2 class="section-header">Built for pilots who care about detail</h2>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="feature-card bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                    <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fa-solid fa-wind text-3xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-xl mb-3">Realistic Physics</h3>
-                    <p class="text-slate-400">Authentic drone flight dynamics including wind, inertia, and payload weight.</p>
-                </div>
-                
-                <div class="feature-card bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                    <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fa-solid fa-map-marked text-3xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-xl mb-3">Diverse Environments</h3>
-                    <p class="text-slate-400">Deliver across cities, mountains, forests, and industrial zones.</p>
-                </div>
-                
-                <div class="feature-card bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                    <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fa-solid fa-clock text-3xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-xl mb-3">Time Pressure</h3>
-                    <p class="text-slate-400">Tight delivery windows that reward precision and smart planning.</p>
-                </div>
-                
-                <div class="feature-card bg-slate-900 border border-slate-800 rounded-3xl p-8">
-                    <div class="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fa-solid fa-tachometer-alt text-3xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-xl mb-3">Skill Progression</h3>
-                    <p class="text-slate-400">Unlock new drones and upgrades as you master advanced techniques.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Screenshots -->
-    <div id="screenshots" class="max-w-screen-2xl mx-auto px-8 py-20">
-        <div class="flex items-end justify-between mb-10">
-            <div>
-                <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">IN ACTION</div>
-                <h2 class="section-header">Beautifully crafted moments</h2>
-            </div>
-            <a href="#" class="hidden md:block text-sm hover:text-white transition-colors">View full gallery →</a>
-        </div>
+    <div class="max-w-[1100px] mx-auto px-6 pt-16 pb-12">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="screenshot rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-slate-700 mb-4"></i>
-                    <p class="text-sm text-slate-400">City Delivery</p>
-                </div>
-            </div>
-            <div class="screenshot rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-slate-700 mb-4"></i>
-                    <p class="text-sm text-slate-400">Mountain Pass</p>
-                </div>
-            </div>
-            <div class="screenshot rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-slate-700 mb-4"></i>
-                    <p class="text-sm text-slate-400">Night Operations</p>
-                </div>
-            </div>
-            <div class="screenshot rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video flex items-center justify-center">
-                <div class="text-center p-8">
-                    <i class="fa-solid fa-image text-4xl text-slate-700 mb-4"></i>
-                    <p class="text-sm text-slate-400">Precision Landing</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Play the Game Section -->
-    <div id="play" class="max-w-screen-2xl mx-auto px-8 py-16 border-t border-slate-800 bg-slate-900">
-        <div class="max-w-4xl mx-auto text-center mb-12">
-            <div class="uppercase tracking-[3px] text-xs font-medium text-sky-400 mb-3">READY TO FLY?</div>
-            <h2 class="section-header mb-4">Experience Drone Delivery</h2>
-            <p class="text-xl text-slate-400 max-w-md mx-auto">Click below to launch the game. Best experienced in fullscreen.</p>
+        <!-- Title + Description -->
+        <div class="text-center mb-10">
+            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font mb-4">
+                Drone Delivery
+            </h1>
+            <p class="text-xl text-slate-400 max-w-md mx-auto">
+                A precision drone simulation by F7eddie.<br>
+                Master the skies and deliver with care.
+            </p>
         </div>
 
-        <!-- Game Launch Area -->
+        <!-- Play Area -->
         <div class="max-w-[1100px] mx-auto">
-            <div id="game-wrapper" class="hidden unity-canvas-wrapper border border-slate-700 rounded-3xl overflow-hidden">
-                <div id="unity-container" class="relative w-full aspect-video bg-black">
+            
+            <!-- Game Container -->
+            <div id="game-wrapper" class="hidden unity-canvas-wrapper rounded-3xl overflow-hidden border border-slate-700 bg-black">
+                <div id="unity-container" class="relative w-full aspect-video">
                     <canvas id="unity-canvas" width="1920" height="1080" class="w-full h-full"></canvas>
                     
                     <!-- Start Overlay -->
                     <div id="start-overlay" class="absolute inset-0 bg-black/90 flex items-center justify-center z-50">
                         <div class="text-center px-8">
-                            <h3 class="text-4xl font-semibold mb-3">Ready to deliver?</h3>
-                            <p class="text-slate-400 mb-8 max-w-xs mx-auto">Click below to enter fullscreen and start the game.</p>
+                            <h3 class="text-4xl font-semibold mb-3">Ready to fly?</h3>
+                            <p class="text-slate-400 mb-8">Click below to launch in fullscreen</p>
                             
                             <button id="start-btn"
-                                    class="px-10 py-4 bg-white text-slate-900 hover:bg-slate-100 transition-all font-semibold rounded-3xl text-lg flex items-center gap-x-3 mx-auto shadow-xl">
-                                <span>Launch Game in Fullscreen</span>
-                                <i class="fa-solid fa-play"></i>
+                                    class="px-10 py-4 bg-white text-slate-900 hover:bg-slate-100 active:scale-[0.985] transition-all font-semibold rounded-3xl text-xl flex items-center gap-x-3 mx-auto shadow-2xl">
+                                <span>Play in Fullscreen</span>
+                                <i class="fa-solid fa-play ml-1"></i>
                             </button>
                         </div>
                     </div>
                     
                     <!-- Pause Overlay -->
                     <div id="pause-overlay" class="hidden absolute inset-0 bg-black/95 z-[60] flex items-center justify-center">
-                        <div class="text-center">
-                            <h3 class="text-5xl font-semibold mb-4">Game Paused</h3>
+                        <div class="text-center px-6">
+                            <h3 class="text-5xl font-semibold mb-3">Game Paused</h3>
                             <p class="text-xl text-slate-400 mb-8">You exited fullscreen</p>
                             
                             <button id="resume-btn"
@@ -281,54 +80,40 @@
                     </div>
                 </div>
             </div>
-            
-            <div id="play-prompt" class="text-center">
+
+            <!-- Launch Button -->
+            <div id="play-prompt" class="text-center mt-8">
                 <button onclick="launchGame()" 
                         class="group px-14 py-5 bg-white hover:bg-slate-100 active:scale-[0.985] transition-all text-slate-900 font-semibold rounded-3xl text-2xl flex items-center gap-x-4 mx-auto shadow-2xl shadow-white/10">
                     <span>Play Drone Delivery</span>
                     <i class="fa-solid fa-arrow-right group-active:translate-x-1 transition-transform"></i>
                 </button>
-                <p class="mt-4 text-sm text-slate-500">Best experienced on desktop • Fullscreen recommended</p>
+                <p class="mt-4 text-sm text-slate-500">Best experienced in fullscreen • Desktop recommended</p>
             </div>
+
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 py-12">
-        <div class="max-w-screen-2xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-y-6 text-sm text-slate-400">
-            <div>
-                © 2026 F7eddie. All rights reserved.
-            </div>
-            <div class="flex items-center gap-x-8">
-                <a href="#" class="hover:text-white transition-colors">Privacy</a>
-                <a href="#" class="hover:text-white transition-colors">Terms</a>
-                <a href="https://github.com/F7eddie/Drone_Game" target="_blank" class="hover:text-white transition-colors">Source</a>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        // Tailwind script
-        function initializeTailwind() {
-            document.documentElement.style.setProperty('--accent', '#0ea5e9');
+        // Tailwind
+        function initTailwind() {
+            // Already handled by CDN
         }
-        
-        // Game loading logic (from previous versions)
+
         let unityInstance = null;
-        
+
         function launchGame() {
             const prompt = document.getElementById('play-prompt');
             const wrapper = document.getElementById('game-wrapper');
             
             prompt.style.display = 'none';
-            wrapper.classList.remove('hidden');
             wrapper.style.display = 'block';
+            wrapper.classList.remove('hidden');
             
-            // Scroll to game
+            // Scroll smoothly to game
             wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        
-        // Full game initialization (kept from previous working version)
+
         function initializeGame() {
             const canvas = document.getElementById("unity-canvas");
             const container = document.getElementById("unity-container");
@@ -339,7 +124,7 @@
 
             const buildUrl = "Build";
             const loaderUrl = buildUrl + "/a928705433bd28c0cf588e497698ea8f.loader.js";
-            
+
             const config = {
                 dataUrl: buildUrl + "/7c2e535a2bae0b6af448127da25c9006.data.unityweb",
                 frameworkUrl: buildUrl + "/c567148f20765437f74d711b26459f12.framework.js.unityweb",
@@ -350,13 +135,13 @@
                 productVersion: "1.0",
             };
 
-            // Desktop sizing
+            // Desktop size
             if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 canvas.style.width = "1920px";
                 canvas.style.height = "1080px";
             }
 
-            // Fullscreen + 3cm buffer listener
+            // Fullscreen + 3cm buffer + pause logic
             document.addEventListener('fullscreenchange', () => {
                 if (document.fullscreenElement) {
                     container.classList.add('fullscreen-buffer');
@@ -369,38 +154,48 @@
 
             // Resume button
             resumeBtn.addEventListener("click", () => {
-                if (canvas.requestFullscreen) canvas.requestFullscreen();
-                else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+                if (canvas.requestFullscreen) {
+                    canvas.requestFullscreen();
+                } else if (canvas.webkitRequestFullscreen) {
+                    canvas.webkitRequestFullscreen();
+                } else if (canvas.msRequestFullscreen) {
+                    canvas.msRequestFullscreen();
+                }
             });
 
-            // Start button - loads game
+            // Start button - loads the game
             startBtn.addEventListener("click", function () {
                 startBtn.style.display = "none";
                 startOverlay.style.background = 'rgba(0,0,0,0.7)';
-                
+
                 const script = document.createElement("script");
                 script.src = loaderUrl;
+
                 script.onload = () => {
                     createUnityInstance(canvas, config, (progress) => {
-                        // You can add progress feedback here if desired
+                        // Progress can be added here if needed
                     }).then((instance) => {
                         unityInstance = instance;
                         startOverlay.style.display = "none";
-                    }).catch(console.error);
+                    }).catch((error) => {
+                        console.error("Failed to load game:", error);
+                        alert("Failed to load the game. Please check the console.");
+                    });
                 };
+
+                script.onerror = () => {
+                    alert("Could not load game files. Make sure the Build folder is in the same directory.");
+                };
+
                 document.body.appendChild(script);
             });
         }
 
-        // Initialize everything
         function init() {
-            initializeTailwind();
+            initTailwind();
             initializeGame();
-            
-            // Optional: keyboard hint
-            console.log('%c[Drone Delivery] Professional showcase site initialized', 'color:#64748b');
         }
-        
+
         window.onload = init;
     </script>
 </body>
