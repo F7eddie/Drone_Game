@@ -33,45 +33,38 @@
 </head>
 <body class="bg-[#0a0a0a] text-zinc-200">
 
-    <div class="max-w-[1100px] mx-auto px-6 pt-14 pb-10">
+    <div class="max-w-[1200px] mx-auto px-6 pt-12 pb-10">
         
-        <!-- Title + Description -->
-        <div class="max-w-2xl mx-auto text-center mb-12">
-            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font mb-5">
+        <!-- Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-7xl md:text-8xl font-semibold tracking-tighter heading-font">
                 Drone Delivery
             </h1>
-            
-            <p class="text-xl text-zinc-400 max-w-lg mx-auto leading-relaxed">
-                A precision drone simulation where every delivery counts. 
-                Master realistic flight physics, navigate dynamic environments, 
-                and deliver packages on time under pressure.
-            </p>
-            
-            <p class="mt-4 text-sm text-zinc-500">
-                Built by F7eddie • Play directly in your browser
+        </div>
+
+        <!-- Bigger Description + Status -->
+        <div class="max-w-3xl mx-auto text-center mb-10">
+            <div class="flex justify-center mb-4">
+                <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30">
+                    <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span class="text-emerald-400 text-sm font-medium">Available to play now</span>
+                </div>
+            </div>
+
+            <p class="text-xl text-zinc-400 leading-relaxed">
+                A precision drone simulation where timing, control, and skill matter. 
+                Navigate realistic wind, tight spaces, and changing conditions to deliver packages 
+                on time. Every flight tests your precision and decision-making.
             </p>
         </div>
 
         <!-- Play Area -->
-        <div class="max-w-[1100px] mx-auto">
+        <div class="max-w-[1200px] mx-auto">
             
             <!-- Game Container -->
             <div id="game-wrapper" class="hidden game-wrapper rounded-3xl overflow-hidden border border-zinc-800 bg-black">
                 <div id="unity-container" class="relative w-full aspect-video bg-black">
                     <canvas id="unity-canvas" width="1920" height="1080" class="w-full h-full"></canvas>
-                    
-                    <!-- Start Overlay -->
-                    <div id="start-overlay" class="absolute inset-0 bg-black/90 flex items-center justify-center z-50">
-                        <div class="text-center px-8">
-                            <h3 class="text-4xl font-semibold mb-3">Ready to deliver?</h3>
-                            <p class="text-zinc-400 mb-8">The game will launch in fullscreen</p>
-                            
-                            <button id="start-btn"
-                                    class="px-10 py-4 bg-white text-black hover:bg-zinc-100 active:scale-[0.985] transition-all font-semibold rounded-3xl text-xl flex items-center gap-x-3 mx-auto">
-                                <span>Start Game</span>
-                            </button>
-                        </div>
-                    </div>
                     
                     <!-- Pause Overlay -->
                     <div id="pause-overlay" class="hidden absolute inset-0 bg-black/95 z-[60] flex items-center justify-center">
@@ -88,14 +81,14 @@
                 </div>
             </div>
 
-            <!-- Launch Button -->
+            <!-- Single Play Button -->
             <div id="play-prompt" class="text-center mt-8">
                 <button onclick="launchGame()" 
                         class="group px-16 py-5 bg-white hover:bg-zinc-100 active:scale-[0.985] transition-all text-black font-semibold rounded-3xl text-2xl flex items-center gap-x-4 mx-auto shadow-xl">
                     <span>Play Now</span>
                     <i class="fa-solid fa-play ml-1"></i>
                 </button>
-                <p class="mt-4 text-sm text-zinc-500">Recommended on desktop • Goes fullscreen automatically</p>
+                <p class="mt-4 text-sm text-zinc-500">Goes fullscreen automatically • Best on desktop</p>
             </div>
 
         </div>
@@ -110,7 +103,10 @@
             const container = document.getElementById('unity-container');
             const canvas = document.getElementById('unity-canvas');
 
+            // Hide play button
             prompt.style.display = 'none';
+            
+            // Show game
             wrapper.style.display = 'block';
             wrapper.classList.remove('hidden');
 
@@ -123,15 +119,13 @@
                 container.msRequestFullscreen();
             }
 
-            // Load the game
+            // Load the game automatically
             loadUnityGame();
         }
 
         function loadUnityGame() {
             const canvas = document.getElementById("unity-canvas");
             const container = document.getElementById("unity-container");
-            const startOverlay = document.getElementById("start-overlay");
-            const startBtn = document.getElementById("start-btn");
             const pauseOverlay = document.getElementById("pause-overlay");
             const resumeBtn = document.getElementById("resume-btn");
 
@@ -148,11 +142,9 @@
                 productVersion: "1.0",
             };
 
-            // Desktop sizing
-            if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                canvas.style.width = "100%";
-                canvas.style.height = "100%";
-            }
+            // Responsive sizing
+            canvas.style.width = "100%";
+            canvas.style.height = "100%";
 
             // Fullscreen + 3cm buffer + pause logic
             document.addEventListener('fullscreenchange', () => {
@@ -171,38 +163,27 @@
                 else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
             });
 
-            // Start button inside game
-            startBtn.addEventListener("click", function () {
-                startBtn.style.display = "none";
-                startOverlay.style.background = 'rgba(0,0,0,0.6)';
+            // Automatically load Unity (no extra button)
+            const script = document.createElement("script");
+            script.src = loaderUrl;
 
-                const script = document.createElement("script");
-                script.src = loaderUrl;
+            script.onload = () => {
+                createUnityInstance(canvas, config, (progress) => {
+                    // Progress can be shown here if needed
+                }).then((instance) => {
+                    unityInstance = instance;
+                }).catch((error) => {
+                    console.error("Game failed to load:", error);
+                    alert("Failed to load the game. Please check the console (F12).");
+                });
+            };
 
-                script.onload = () => {
-                    createUnityInstance(canvas, config, (progress) => {
-                        // Optional progress feedback
-                    }).then((instance) => {
-                        unityInstance = instance;
-                        startOverlay.style.display = "none";
-                    }).catch((error) => {
-                        console.error(error);
-                        alert("Failed to load the game. Check console for details.");
-                    });
-                };
+            script.onerror = () => {
+                alert("Could not load game files. Make sure the Build folder is in the same directory.");
+            };
 
-                script.onerror = () => {
-                    alert("Could not load game files. Make sure the Build folder is correct.");
-                };
-
-                document.body.appendChild(script);
-            });
+            document.body.appendChild(script);
         }
-
-        // Initialize on page load
-        window.onload = function() {
-            console.log('%c[Drone Delivery] Clean professional site ready', 'color:#3f3f46');
-        };
     </script>
 </body>
 </html>
